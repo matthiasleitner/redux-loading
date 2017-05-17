@@ -12,7 +12,7 @@ const loadingReducer = (state = {
       }
     case 'LOADED':
       const pending = state.pending > 0 ? state.pending - 1 : 0
-
+      const done = pending === 0 ? true : false
       const messages = state.messages;
 
       if(action.payload){
@@ -21,7 +21,7 @@ const loadingReducer = (state = {
 
       return {
         pending,
-        done: pending === 0 ? true : false,
+        done,
         messages: Object.assign({}, messages)
       }
     default:
