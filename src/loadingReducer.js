@@ -60,7 +60,7 @@ const loadingReducer = (state = {
 
       const done = pending === 0;
       loaders = Object.assign({}, loaders, updatedLoader)
-      const messages = loaders.map((l) => l.message).filter(() => true)
+      const messages = Object.entries(loaders).map((l) => l.message).filter(() => true)
       message = messages.length > 0 && messages[0]
       return {
         pending,
