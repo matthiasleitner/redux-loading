@@ -49,7 +49,7 @@ const loadingReducer = (state = {
       }
 
       loaders = Object.assign({}, loaders, updatedLoader)
-      onlySilent = Object.entries(loaders).every((l) => l.silent)
+      const onlySilent = Object.entries(loaders).every((l) => l.silent)
       return {
         pending: state.pending + 1,
         done: false,
