@@ -7,7 +7,7 @@ const loadingMiddleware = ({dispatch}) => {
 
     const loading = meta.loading
 
-    meta.loading = null;
+    delete meta.loading;
 
     if(loading){
       dispatch({type: 'LOADING', payload, meta })
