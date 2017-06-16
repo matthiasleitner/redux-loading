@@ -24,7 +24,8 @@ const loadingReducer = (state = {
   pending: 0,
   done: true,
   loaders: {},
-  message: null
+  message: null,
+  onlySilent: true
 }, action) => {
   if(action.type != 'LOADING' && action.type != 'LOADED'){
     return state;
@@ -48,11 +49,13 @@ const loadingReducer = (state = {
       }
 
       loaders = Object.assign({}, loaders, updatedLoader)
+      onlySilent = Object.entries(loaders).every((l) => l.silent)
       return {
         pending: state.pending + 1,
         done: false,
         loaders,
-        message: state.message || message
+        message: state.message || message,
+        onlySilent
       }
     case 'LOADED':
       let pending    = state.pending;
