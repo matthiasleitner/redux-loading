@@ -2,7 +2,7 @@ const loaderName = (action) => {
   return action.meta.loader || 'default';
 }
 
-const copyLoader = (existingLoader, incr = 1) => {
+const copyLoader = (loader, existingLoader, incr = 1) => {
   return {
     [loader]: { message: existingLoader.message, pending: existingLoader.pending + incr }
   }
@@ -13,6 +13,10 @@ const loadingReducer = (state = {
   loaders: {},
   messages: {}
 }, action) => {
+  if(action.type != 'LOADING' && action.type != 'LOADED'){
+    return state;
+  }
+
   const loader         = loaderName(action);
   let   loaders        = state.loaders;
   const existingLoader = loaders[loader];
@@ -23,7 +27,7 @@ const loadingReducer = (state = {
       const message   = action.payload.message || action.meta.message;
 
       if(existingLoader){
-        updatedLoader = copyLoader(existingLoader);
+        updatedLoader = copyLoader(loader, existingLoader);
       } else {
         updatedLoader = {
           [loader]: { message, pending: 1 }
@@ -44,7 +48,7 @@ const loadingReducer = (state = {
 
       if(existingLoader){
         if(existingLoader.pending > 1){
-          updatedLoader = copyLoader(existingLoader, -1);
+          updatedLoader = copyLoader(loader, existingLoader, -1);
         } else {
           delete loaders[loader];
         }
