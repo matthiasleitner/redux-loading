@@ -7,6 +7,19 @@ const copyLoader = (loader, existingLoader, incr = 1) => {
     [loader]: { message: existingLoader.message, pending: existingLoader.pending + incr }
   }
 }
+
+const getMessage = (action) => {
+  if(action.payload){
+    if(action.payload.silent){
+      return null;
+    }
+    if(action.payload.message){
+      return action.payload.message;
+    }
+  }
+
+  return action.meta.message;
+}
 const loadingReducer = (state = {
   pending: 0,
   done: true,
@@ -21,16 +34,16 @@ const loadingReducer = (state = {
   let   loaders        = state.loaders;
   const existingLoader = loaders[loader];
   let   updatedLoader  =  null;
-  let   message = (action.payload && action.payload.message ) || action.meta.message;
+  let   message = getMessage(action);
+  const silent  = action.payload ? action.payload.silent : false;
+
   switch (action.type) {
     case 'LOADING':
-
-
       if(existingLoader){
         updatedLoader = copyLoader(loader, existingLoader);
       } else {
         updatedLoader = {
-          [loader]: { message, pending: 1 }
+          [loader]: { message, pending: 1, silent }
         }
       }
 
@@ -61,7 +74,7 @@ const loadingReducer = (state = {
       const done = pending === 0;
       loaders = Object.assign({}, loaders, updatedLoader)
       const messages = Object.entries(loaders).map((l) => l.message).filter(() => true)
-      message = messages.length > 0 && messages[0]
+      message = messages.length > 0 && !!messages[0]
       return {
         pending,
         done,
