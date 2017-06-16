@@ -11,7 +11,7 @@ const loadingReducer = (state = {
   pending: 0,
   done: true,
   loaders: {},
-  messages: {}
+  message: null
 }, action) => {
   if(action.type != 'LOADING' && action.type != 'LOADED'){
     return state;
@@ -21,10 +21,10 @@ const loadingReducer = (state = {
   let   loaders        = state.loaders;
   const existingLoader = loaders[loader];
   let   updatedLoader  =  null;
-
+  let   message = (action.payload && action.payload.message ) || action.meta.message;
   switch (action.type) {
     case 'LOADING':
-      const message = (action.payload && action.payload.message ) || action.meta.message;
+
 
       if(existingLoader){
         updatedLoader = copyLoader(loader, existingLoader);
@@ -38,7 +38,8 @@ const loadingReducer = (state = {
       return {
         pending: state.pending + 1,
         done: false,
-        loaders
+        loaders,
+        message: state.message || message
       }
     case 'LOADED':
       let pending    = state.pending;
@@ -58,10 +59,14 @@ const loadingReducer = (state = {
       pending = pending > -1 ? pending : 0;
 
       const done = pending === 0;
+      loaders = Object.assign({}, loaders, updatedLoader)
+      const messages = loaders.map((l) => l.message).filter(() => true)
+      message = messages.length > 0 && messages[0]
       return {
         pending,
         done,
-        loaders: Object.assign({}, loaders, updatedLoader)
+        loaders,
+        message
       }
     default:
       return state
