@@ -25,7 +25,8 @@ const loadingReducer = (state = {
   done: true,
   loaders: {},
   message: null,
-  onlySilent: true
+  onlySilent: true,
+  showLoading: false,
 }, action) => {
   if(action.type != 'LOADING' && action.type != 'LOADED'){
     return state;
@@ -55,7 +56,8 @@ const loadingReducer = (state = {
         done: false,
         loaders,
         message: state.message || message,
-        onlySilent
+        onlySilent,
+        showLoading: !done && !onlySilent
       }
     case 'LOADED':
       let pending    = state.pending;
