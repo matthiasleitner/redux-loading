@@ -37,7 +37,7 @@ const loadingReducer = (state = {
   let   updatedLoader  =  null;
   let   message = getMessage(action);
   const silent  = action.payload ? action.payload.silent : false;
-
+  let   onlySilent = state.onlySilent;
   switch (action.type) {
     case 'LOADING':
       if(existingLoader){
@@ -49,7 +49,7 @@ const loadingReducer = (state = {
       }
 
       loaders = Object.assign({}, loaders, updatedLoader)
-      const onlySilent = Object.entries(loaders).every((l) => l.silent)
+      onlySilent = Object.entries(loaders).every((l) => l.silent)
       return {
         pending: state.pending + 1,
         done: false,
@@ -78,11 +78,13 @@ const loadingReducer = (state = {
       loaders = Object.assign({}, loaders, updatedLoader)
       const messages = Object.entries(loaders).map((l) => l.message).filter(() => true)
       message = messages.length > 0 && !!messages[0]
+      onlySilent = Object.entries(loaders).every((l) => l.silent)
       return {
         pending,
         done,
         loaders,
-        message
+        message,
+        onlySilent
       }
     default:
       return state
