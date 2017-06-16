@@ -84,7 +84,8 @@ const loadingReducer = (state = {
         done,
         loaders,
         message,
-        onlySilent
+        onlySilent,
+        showLoading: !done && !onlySilent
       }
     default:
       return state
