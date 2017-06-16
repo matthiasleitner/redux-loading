@@ -5,10 +5,10 @@ const loadingMiddleware = ({dispatch}) => {
       return next(action)
     }
     if(meta.loading){
-      dispatch({type: 'LOADING', payload })
+      dispatch({type: 'LOADING', payload, meta })
     }
     else{
-      dispatch({type: 'LOADED', payload })
+      dispatch({type: 'LOADED', payload, meta })
     }
 
     return next(action)
