@@ -41,19 +41,23 @@ const loadingReducer = (state = {
         loaders
       }
     case 'LOADED':
-      const pending  = state.pending > 0 ? state.pending - 1 : 0
-      const done     = pending === 0;
+      let pending    = state.pending;
+
 
       let updatedLoader = {}
 
       if(existingLoader){
-        if(existingLoader.pending > 1){
+        if(existingLoader.pending > 1 && !action.meta.stopLoading){
+          pending--;
           updatedLoader = copyLoader(loader, existingLoader, -1);
         } else {
+          pending =- existingLoader.pending
           delete loaders[loader];
         }
       }
+      pending = pending > -1 ? pending : 0;
 
+      const done = pending === 0;
       return {
         pending,
         done,
