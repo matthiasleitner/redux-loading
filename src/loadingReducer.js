@@ -49,7 +49,7 @@ const loadingReducer = (state = {
       }
 
       loaders = Object.assign({}, loaders, updatedLoader)
-      onlySilent = Object.entries(loaders).every((l) => l.silent)
+      onlySilent = Object.values(loaders).every((l) => l.silent)
       return {
         pending: state.pending + 1,
         done: false,
@@ -76,9 +76,9 @@ const loadingReducer = (state = {
 
       const done = pending === 0;
       loaders = Object.assign({}, loaders, updatedLoader)
-      const messages = Object.entries(loaders).map((l) => l.message).filter(() => true)
+      const messages = Object.values(loaders).map((l) => l.message).filter(() => true)
       message = messages.length > 0 && !!messages[0]
-      onlySilent = Object.entries(loaders).every((l) => l.silent)
+      onlySilent = Object.values(loaders).every((l) => l.silent)
       return {
         pending,
         done,
