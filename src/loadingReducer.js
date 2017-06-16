@@ -24,7 +24,7 @@ const loadingReducer = (state = {
 
   switch (action.type) {
     case 'LOADING':
-      const message   = action.payload.message || action.meta.message;
+      const message = (action.payload && action.payload.message ) || action.meta.message;
 
       if(existingLoader){
         updatedLoader = copyLoader(loader, existingLoader);
