@@ -4,7 +4,12 @@ const loadingMiddleware = ({dispatch}) => {
     if (!meta || !meta.hasOwnProperty('loading')) {
       return next(action)
     }
-    if(meta.loading){
+
+    const loading = meta.loading
+
+    meta.loading = null;
+
+    if(loading){
       dispatch({type: 'LOADING', payload, meta })
     }
     else{
