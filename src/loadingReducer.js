@@ -38,7 +38,7 @@ const loadingReducer = (state = {
   let   updatedLoader  =  null;
   let   message = getMessage(action);
 
-  const globalLoading = action.payload ? action.payload.global : !!action.meta.global;
+  const globalLoading = (action.payload && action.payload.global) || !!action.meta.global;
 
   switch (action.type) {
     case 'LOADING':
