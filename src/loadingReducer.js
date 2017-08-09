@@ -17,7 +17,7 @@ const getMessage = (action) => {
 }
 
 const getShowloading = (loaders) => {
-  return Object.values(loaders).some((l) => l.global)
+  return Object.values(loaders).some((l) => l.globalLoading)
 }
 
 const loadingReducer = (state = {
