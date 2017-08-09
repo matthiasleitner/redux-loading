@@ -9,25 +9,25 @@ const copyLoader = (loader, existingLoader, incr = 1) => {
 }
 
 const getMessage = (action) => {
-  if(action.payload){
-    if(action.payload.silent){
-      return null;
-    }
-    if(action.payload.message){
-      return action.payload.message;
-    }
+  if(action.payload && action.payload.message){
+    return action.payload.message;
   }
 
   return action.meta.message;
 }
+
+const getShowloading = (loaders) => {
+  return Object.values(loaders).some((l) => l.global)
+}
+
 const loadingReducer = (state = {
   pending: 0,
   done: true,
   loaders: {},
   message: null,
-  onlySilent: true,
   showLoading: false,
 }, action) => {
+
   if(action.type != 'LOADING' && action.type != 'LOADED'){
     return state;
   }
@@ -37,31 +37,30 @@ const loadingReducer = (state = {
   const existingLoader = loaders[loader];
   let   updatedLoader  =  null;
   let   message = getMessage(action);
-  const silent  = action.payload ? action.payload.silent : false;
-  let   onlySilent = state.onlySilent;
+
+  const globalLoading = action.payload ? action.payload.global : false;
+
   switch (action.type) {
     case 'LOADING':
       if(existingLoader){
         updatedLoader = copyLoader(loader, existingLoader);
       } else {
         updatedLoader = {
-          [loader]: { message, pending: 1, silent }
+          [loader]: { message, pending: 1, globalLoading }
         }
       }
 
       loaders = Object.assign({}, loaders, updatedLoader)
-      onlySilent = Object.values(loaders).every((l) => l.silent)
+
       return {
         pending: state.pending + 1,
         done: false,
         loaders,
         message: state.message || message,
-        onlySilent,
-        showLoading: !done && !onlySilent
+        showLoading: getShowloading(loaders)
       }
     case 'LOADED':
       let pending    = state.pending;
-
 
       let updatedLoader = {}
 
@@ -77,17 +76,18 @@ const loadingReducer = (state = {
       pending = pending > -1 ? pending : 0;
 
       const done = pending === 0;
+
       loaders = Object.assign({}, loaders, updatedLoader)
+
       const messages = Object.values(loaders).map((l) => l.message).filter(() => true)
       message = messages.length > 0 && !!messages[0]
-      onlySilent = Object.values(loaders).every((l) => l.silent)
+
       return {
         pending,
         done,
         loaders,
         message,
-        onlySilent,
-        showLoading: !done && !onlySilent
+        showLoading: getShowloading(loaders)
       }
     default:
       return state
